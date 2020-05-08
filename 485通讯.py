@@ -10,12 +10,12 @@ sys_db_stats = {4096: ['设备工作状态', 1, ''], 4098: ['室内风机状态'
 
 
 temper = [0X1008, 0X100E, 0X1010, 0X0A, 0X0C,
-          0X0E, 0X10, 0X14, 0X1C, 0X1E]
+          0X0E, 0X10, 0X1C, 0X1E]
 vote = [0X1018, 0X12, 0X14]
 mode = [0X1000, 0X1002, 0X1004, 0X1006]
 
 
-def mod(start, num, PORT='com5'):
+def mod(start, num, PORT='com6'):
     red = []
     read = {}
     alarm = ""
@@ -81,5 +81,17 @@ def rtu_date_read():
     data_pro()
 
 
+
+def mod_crtl(PORT='com6'):
+    master = modbus_rtu.RtuMaster(serial.Serial(
+        port=PORT, baudrate=9600, bytesize=8, parity="N", stopbits=1))
+    master.set_timeout(1)
+    master.set_verbose(True)
+    master.execute(21, cst.WRITE_SINGLE_REGISTER, 10, output_value=350)
+
+
+mod_crtl()
+
 rtu_date_read()
-print(sys_db_stats)
+for i in sys_db_stats:
+    print (str(sys_db_stats[i][0]) + ':' +  '\t' + str(sys_db_stats[i][2]))
